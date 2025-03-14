@@ -6,7 +6,7 @@ function startTimer() {
     if (timerInterval === null) {
         timerInterval = setInterval(() => {
             timer++;
-            document.getElement("timer").innerText = timer;
+            document.getElementById("timer").innerText = timer;
         }, 1000);
     }
 }
@@ -16,17 +16,19 @@ function resetGame() {
     timer = 0;
     clearInterval(timerInterval);
     timerInterval = null;
-    document.getElement("move-count").innerText = moveCount;
-    document.getElement("timer").innerText = timer;
+    document.getElementById("move-count").innerText = moveCount;
+    document.getElementById("timer").innerText = timer;
 }
 
 function swapTiles(cell1, cell2) {
-    let temp = document.getElement(cell1).className;
-    document.getElement(cell1).className = document.getElement(cell2).className;
-    document.getElement(cell2).className = temp;
-    
+    let tile1 = document.getElementById(cell1);
+    let tile2 = document.getElementById(cell2);
+    let tempClass = tile1.className;
+    tile1.className = tile2.className;
+    tile2.className = tempClass;
+
     moveCount++;
-    document.getElement("move-count").innerText = moveCount;
+    document.getElementById("move-count").innerText = moveCount;
 
     checkWin();
 }
@@ -34,37 +36,40 @@ function swapTiles(cell1, cell2) {
 function shuffle() {
     resetGame();
     startTimer();
+    let positions = [];
+
     for (let row = 1; row <= 4; row++) {
         for (let column = 1; column <= 4; column++) {
-            let row2 = Math.floor(Math.random() * 4 + 1);
-            let column2 = Math.floor(Math.random() * 4 + 1);
-            
-            let temp = document.getElement("cell" + row + column).className;
-            document.getElement("cell" + row + column).className = document.getElement("cell" + row2 + column2).className;
-            document.getElement("cell" + row2 + column2).className = temp;
+            positions.push(`cell${row}${column}`);
         }
+    }
+
+    positions.sort(() => Math.random() - 0.5);
+
+    for (let i = 0; i < positions.length; i++) {
+        document.getElementById(positions[i]).className = "tile" + (i + 1);
     }
 }
 
 function clickTile(row, column) {
     startTimer();
-    let cell = document.getElement("cell" + row + column);
+    let cell = document.getElementById("cell" + row + column);
     let tile = cell.className;
 
-    if (tile != "tile16") {
-        if (column < 4 && document.getElement("cell" + row + (column + 1)).className == "tile16") {
+    if (tile !== "tile16") {
+        if (column < 4 && document.getElementById("cell" + row + (column + 1)).className === "tile16") {
             swapTiles("cell" + row + column, "cell" + row + (column + 1));
             return;
         }
-        if (column > 1 && document.getElement("cell" + row + (column - 1)).className == "tile16") {
+        if (column > 1 && document.getElementById("cell" + row + (column - 1)).className === "tile16") {
             swapTiles("cell" + row + column, "cell" + row + (column - 1));
             return;
         }
-        if (row > 1 && document.getElement("cell" + (row - 1) + column).className == "tile16") {
+        if (row > 1 && document.getElementById("cell" + (row - 1) + column).className === "tile16") {
             swapTiles("cell" + row + column, "cell" + (row - 1) + column);
             return;
         }
-        if (row < 4 && document.getElement("cell" + (row + 1) + column).className == "tile16") {
+        if (row < 4 && document.getElementById("cell" + (row + 1) + column).className === "tile16") {
             swapTiles("cell" + row + column, "cell" + (row + 1) + column);
             return;
         }
@@ -82,7 +87,7 @@ function checkWin() {
     let currentTiles = [];
     for (let row = 1; row <= 4; row++) {
         for (let column = 1; column <= 4; column++) {
-            currentTiles.push(document.getElement("cell" + row + column).className);
+            currentTiles.push(document.getElementById("cell" + row + column).className);
         }
     }
 
