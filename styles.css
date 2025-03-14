@@ -1,6 +1,15 @@
-BODY {
+body {
     background: #156823;
     font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+#table {
+    display: table;
 }
 
 .tile1, .tile2, .tile3, .tile4, .tile5, .tile6, .tile7, .tile8,
@@ -17,19 +26,47 @@ BODY {
     vertical-align: middle;
 }
 
-.tile1 {background-position: 0px 0px;}
-.tile2 {background-position: -90px 0px;}
-.tile3 {background-position: -180px 0px;}
-.tile4 {background-position: -270px 0px;}
-.tile5 {background-position: 0px -90px;}
-.tile6 {background-position: -90px -90px;}
-.tile7 {background-position: -180px -90px;}
-.tile8 {background-position: -270px -90px;}
-.tile9 {background-position: 0px -180px;}
-.tile10 {background-position: -90px -180px;}
-.tile11 {background-position: -180px -180px;}
-.tile12 {background-position: -270px -180px;}
-.tile13 {background-position: 0px -270px;}
-.tile14 {background-position: -90px -270px;}
-.tile15 {background-position: -180px -270px;}
-.tile16 {background: white; cursor: default;}
+.tile1 { background-position: 0px 0px; }
+.tile2 { background-position: -90px 0px; }
+.tile3 { background-position: -180px 0px; }
+.tile4 { background-position: -270px 0px; }
+.tile5 { background-position: 0px -90px; }
+.tile6 { background-position: -90px -90px; }
+.tile7 { background-position: -180px -90px; }
+.tile8 { background-position: -270px -90px; }
+.tile9 { background-position: 0px -180px; }
+.tile10 { background-position: -90px -180px; }
+.tile11 { background-position: -180px -180px; }
+.tile12 { background-position: -270px -180px; }
+.tile13 { background-position: 0px -270px; }
+.tile14 { background-position: -90px -270px; }
+.tile15 { background-position: -180px -270px; }
+.tile16 {
+    background: white;
+    cursor: default;
+}
+
+button {
+    margin-top: 20px;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+p {
+    font-size: 18px;
+    margin-top: 10px;
+    color: white;
+}
+
+#game-container {
+    text-align: center;
+}
