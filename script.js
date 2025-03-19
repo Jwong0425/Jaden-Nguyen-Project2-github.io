@@ -109,6 +109,9 @@ function simpleGame() {
         }
     }
 
-    // Swap the last two tiles to make it a "simple" game
-    swapTiles("cell44", "cell43"); // Swaps bottom-right tile with the one to its left
-}
+    // Swap last two tiles manually (without swapTiles to avoid move count increment)
+    let tile43 = document.getElementById("cell43").className;
+    let tile44 = document.getElementById("cell44").className;
+
+    document.getElementById("cell43").className = tile44;
+    document.getElementById("cell44").className = tile43;
