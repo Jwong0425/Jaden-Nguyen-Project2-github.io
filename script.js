@@ -98,19 +98,17 @@ function checkWin() {
 
 function simpleGame() {
     resetGame();
-    let tiles = [];
+
+    // Set up a solved board
+    let count = 1;
     for (let row = 1; row <= 4; row++) {
         for (let column = 1; column <= 4; column++) {
-            tiles.push("cell" + row + column);
+            let cell = document.getElementById("cell" + row + column);
+            cell.className = count === 16 ? "tile16" : "tile" + count;
+            count++;
         }
     }
-    
-    // Set tiles in correct order
-    for (let i = 0; i < 15; i++) {
-        document.getElementById(tiles[i]).className = "tile" + (i + 1);
-    }
-    
-    // Swap last tile with empty slot to create a solvable simple game
-    document.getElementById("cell44").className = "tile15";
-    document.getElementById("cell43").className = "tile16";
+
+    // Swap the last two tiles to make it solvable in one move
+    swapTiles("cell43", "cell44"); 
 }
