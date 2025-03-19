@@ -109,9 +109,13 @@ function simpleGame() {
         }
     }
 
-    // Swap last two tiles manually (without swapTiles to avoid move count increment)
+    // Manually swap only the last two tiles without using swapTiles()
     let tile43 = document.getElementById("cell43").className;
     let tile44 = document.getElementById("cell44").className;
 
     document.getElementById("cell43").className = tile44;
     document.getElementById("cell44").className = tile43;
+
+    // Ensure move count stays at 0
+    document.getElementById("move-count").innerText = moveCount;
+}
