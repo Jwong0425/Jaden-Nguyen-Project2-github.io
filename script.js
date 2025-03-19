@@ -34,15 +34,16 @@ function swapTiles(cell1, cell2) {
 function shuffle() {
     resetGame();
     startTimer();
+    let tiles = [];
     for (let row = 1; row <= 4; row++) {
         for (let column = 1; column <= 4; column++) {
-            let row2 = Math.floor(Math.random() * 4 + 1);
-            let column2 = Math.floor(Math.random() * 4 + 1);
-            
-            let temp = document.getElementById("cell" + row + column).className;
-            document.getElementById("cell" + row + column).className = document.getElementById("cell" + row2 + column2).className;
-            document.getElementById("cell" + row2 + column2).className = temp;
+            tiles.push("cell" + row + column);
         }
+    }
+    
+    for (let i = tiles.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        swapTiles(tiles[i], tiles[j]);
     }
 }
 
@@ -97,20 +98,19 @@ function checkWin() {
 
 function simpleGame() {
     resetGame();
-    startTimer();
-    
-    let num = 1;
+    let tiles = [];
     for (let row = 1; row <= 4; row++) {
         for (let column = 1; column <= 4; column++) {
-            let cell = document.getElementById("cell" + row + column);
-            if (num <= 15) {
-                cell.className = "tile" + num;
-            } else {
-                cell.className = "tile16";
-            }
-            num++;
+            tiles.push("cell" + row + column);
         }
     }
     
-    swapTiles("cell43", "cell44");
+    // Set tiles in correct order
+    for (let i = 0; i < 15; i++) {
+        document.getElementById(tiles[i]).className = "tile" + (i + 1);
+    }
+    
+    // Swap last tile with empty slot to create a solvable simple game
+    document.getElementById("cell44").className = "tile15";
+    document.getElementById("cell43").className = "tile16";
 }
