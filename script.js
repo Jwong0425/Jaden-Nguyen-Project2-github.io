@@ -97,18 +97,18 @@ function checkWin() {
 }
 
 function simpleGame() {
-    resetGame();
+    resetGame(); // Ensures a fresh start
 
-    // Set up a solved board
+    // Arrange tiles in correct order
     let count = 1;
     for (let row = 1; row <= 4; row++) {
         for (let column = 1; column <= 4; column++) {
             let cell = document.getElementById("cell" + row + column);
-            cell.className = count === 16 ? "tile16" : "tile" + count;
+            cell.className = count === 16 ? "tile16" : "tile" + count; // Assigns tile classes correctly
             count++;
         }
     }
 
-    // Swap the last two tiles to make it solvable in one move
-    swapTiles("cell43", "cell44"); 
+    // Swap the last two tiles to make it a "simple" game
+    swapTiles("cell44", "cell43"); // Swaps bottom-right tile with the one to its left
 }
