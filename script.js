@@ -6,7 +6,7 @@ function startTimer() {
     if (timerInterval === null) {
         timerInterval = setInterval(() => {
             timer++;
-            document.getElementById("timer").innerText = timer; // Fixed
+            document.getElementById("timer").innerText = timer;
         }, 1000);
     }
 }
@@ -16,17 +16,17 @@ function resetGame() {
     timer = 0;
     clearInterval(timerInterval);
     timerInterval = null;
-    document.getElementById("move-count").innerText = moveCount; // Fixed
-    document.getElementById("timer").innerText = timer; // Fixed
+    document.getElementById("move-count").innerText = moveCount;
+    document.getElementById("timer").innerText = timer;
 }
 
 function swapTiles(cell1, cell2) {
-    let temp = document.getElementById(cell1).className; // Fixed
-    document.getElementById(cell1).className = document.getElementById(cell2).className; // Fixed
-    document.getElementById(cell2).className = temp; // Fixed
+    let temp = document.getElementById(cell1).className;
+    document.getElementById(cell1).className = document.getElementById(cell2).className;
+    document.getElementById(cell2).className = temp;
     
     moveCount++;
-    document.getElementById("move-count").innerText = moveCount; // Fixed
+    document.getElementById("move-count").innerText = moveCount;
 
     checkWin();
 }
@@ -39,32 +39,32 @@ function shuffle() {
             let row2 = Math.floor(Math.random() * 4 + 1);
             let column2 = Math.floor(Math.random() * 4 + 1);
             
-            let temp = document.getElementById("cell" + row + column).className; // Fixed
-            document.getElementById("cell" + row + column).className = document.getElementById("cell" + row2 + column2).className; // Fixed
-            document.getElementById("cell" + row2 + column2).className = temp; // Fixed
+            let temp = document.getElementById("cell" + row + column).className;
+            document.getElementById("cell" + row + column).className = document.getElementById("cell" + row2 + column2).className;
+            document.getElementById("cell" + row2 + column2).className = temp;
         }
     }
 }
 
 function clickTile(row, column) {
     startTimer();
-    let cell = document.getElementById("cell" + row + column); // Fixed
+    let cell = document.getElementById("cell" + row + column);
     let tile = cell.className;
 
     if (tile != "tile16") {
-        if (column < 4 && document.getElementById("cell" + row + (column + 1)).className == "tile16") { // Fixed
+        if (column < 4 && document.getElementById("cell" + row + (column + 1)).className == "tile16") {
             swapTiles("cell" + row + column, "cell" + row + (column + 1));
             return;
         }
-        if (column > 1 && document.getElementById("cell" + row + (column - 1)).className == "tile16") { // Fixed
+        if (column > 1 && document.getElementById("cell" + row + (column - 1)).className == "tile16") {
             swapTiles("cell" + row + column, "cell" + row + (column - 1));
             return;
         }
-        if (row > 1 && document.getElementById("cell" + (row - 1) + column).className == "tile16") { // Fixed
+        if (row > 1 && document.getElementById("cell" + (row - 1) + column).className == "tile16") {
             swapTiles("cell" + row + column, "cell" + (row - 1) + column);
             return;
         }
-        if (row < 4 && document.getElementById("cell" + (row + 1) + column).className == "tile16") { // Fixed
+        if (row < 4 && document.getElementById("cell" + (row + 1) + column).className == "tile16") {
             swapTiles("cell" + row + column, "cell" + (row + 1) + column);
             return;
         }
@@ -82,7 +82,7 @@ function checkWin() {
     let currentTiles = [];
     for (let row = 1; row <= 4; row++) {
         for (let column = 1; column <= 4; column++) {
-            currentTiles.push(document.getElementById("cell" + row + column).className); // Fixed
+            currentTiles.push(document.getElementById("cell" + row + column).className);
         }
     }
 
@@ -96,6 +96,21 @@ function checkWin() {
 }
 
 function simpleGame() {
-    shuffle();
-    swapTiles("cell44", "cell43"); // Double-check the ids
+    resetGame();
+    startTimer();
+    
+    let num = 1;
+    for (let row = 1; row <= 4; row++) {
+        for (let column = 1; column <= 4; column++) {
+            let cell = document.getElementById("cell" + row + column);
+            if (num <= 15) {
+                cell.className = "tile" + num;
+            } else {
+                cell.className = "tile16";
+            }
+            num++;
+        }
+    }
+    
+    swapTiles("cell43", "cell44");
 }
