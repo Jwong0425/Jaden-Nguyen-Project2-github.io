@@ -32,11 +32,13 @@ function moveTile(row, col) {
         let clickedCell = document.getElementById(`cell${row}${col}`);
         let emptyCell = document.getElementById(`cell${emptyTile.row}${emptyTile.col}`);
 
-        emptyCell.innerHTML = clickedCell.innerHTML;
+        // Remove numbers and just swap the tiles
+        emptyCell.innerHTML = ""; // Clear the number from the empty cell
         emptyCell.className = clickedCell.className;
 
-        clickedCell.innerHTML = "";
-        clickedCell.className = "tile16";
+        // Clear the clicked tile and apply a default class for the empty tile
+        clickedCell.innerHTML = ""; // Clear the number from the clicked cell
+        clickedCell.className = "tile16"; // Empty tile class
 
         emptyTile = { row, col };
 
@@ -71,11 +73,12 @@ function shuffle() {
         for (let col = 1; col <= 4; col++) {
             let cell = document.getElementById(`cell${row}${col}`);
             if (index < tiles.length) {
-                cell.innerHTML = tiles[index].innerHTML;
+                // Remove any numbers in the cells
+                cell.innerHTML = ""; // Clear any previous numbers
                 cell.className = tiles[index].className;
                 index++;
             } else {
-                cell.innerHTML = "";
+                cell.innerHTML = ""; // Make sure empty tile remains empty
                 cell.className = "tile16";
                 emptyTile = { row, col };
             }
@@ -109,7 +112,7 @@ function checkWin() {
 
     clearInterval(timerInterval);
     setTimeout(() => {
-        if (confirm('You won in ${moveCount} moves and ${timer} seconds! Play again?`)) {
+        if (confirm(`You won in ${moveCount} moves and ${timer} seconds! Play again?`)) {
             shuffle();
         }
     }, 500);
