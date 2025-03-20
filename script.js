@@ -28,10 +28,10 @@ function swapTiles(row1, col1, row2, col2) {
     let cell1 = document.getElementById(`cell${row1}${col1}`);
     let cell2 = document.getElementById(`cell${row2}${col2}`);
 
-    // Swap class names
-    let tempClass = cell1.className;
-    cell1.className = cell2.className;
-    cell2.className = tempClass;
+    // Swap inner text (or numbers)
+    let tempText = cell1.innerText;
+    cell1.innerText = cell2.innerText;
+    cell2.innerText = tempText;
 
     // Update empty tile position
     emptyTile.row = row1;
@@ -44,12 +44,12 @@ function swapTiles(row1, col1, row2, col2) {
     checkWin();
 }
 
-// Scrambles the board using random swaps
+// Scrambles the board using valid random moves
 function shuffle() {
     resetGame();
     startTimer();
 
-    let moves = 100; // Number of random moves to shuffle
+    let moves = 100;
     let directions = [
         { row: -1, col: 0 }, // Up
         { row: 1, col: 0 },  // Down
@@ -68,7 +68,7 @@ function shuffle() {
         swapTiles(emptyTile.row + move.row, emptyTile.col + move.col, emptyTile.row, emptyTile.col);
     }
 
-    emptyTile = { row: 4, col: 4 }; // Reset empty tile position
+    emptyTile = { row: 4, col: 4 };
 }
 
 // Handles tile click, moves if adjacent to the empty tile
@@ -85,28 +85,23 @@ function clickTile(row, col) {
 
 // Checks if the board is in winning order
 function checkWin() {
-    let correctOrder = [
-        "tile1", "tile2", "tile3", "tile4",
-        "tile5", "tile6", "tile7", "tile8",
-        "tile9", "tile10", "tile11", "tile12",
-        "tile13", "tile14", "tile15", "tile16"
-    ];
-
-    let currentTiles = [];
+    let count = 1;
     for (let row = 1; row <= 4; row++) {
         for (let col = 1; col <= 4; col++) {
-            currentTiles.push(document.getElementById(`cell${row}${col}`).className);
+            let cell = document.getElementById(`cell${row}${col}`);
+            if (cell.innerText != count && count != 16) {
+                return;
+            }
+            count++;
         }
     }
 
-    if (JSON.stringify(currentTiles) === JSON.stringify(correctOrder)) {
-        clearInterval(timerInterval);
-        setTimeout(() => {
-            if (confirm(`Congratulations! You won in ${moveCount} moves and ${timer} seconds.\nDo you want to play again?`)) {
-                shuffle();
-            }
-        }, 500);
-    }
+    clearInterval(timerInterval);
+    setTimeout(() => {
+        if (confirm(`Congratulations! You won in ${moveCount} moves and ${timer} seconds.\nDo you want to play again?`)) {
+            shuffle();
+        }
+    }, 500);
 }
 
 // Sets up a nearly solved board with only one move required
@@ -117,19 +112,15 @@ function simpleGame() {
     for (let row = 1; row <= 4; row++) {
         for (let col = 1; col <= 4; col++) {
             let cell = document.getElementById(`cell${row}${col}`);
-            cell.className = count === 16 ? "tile16" : `tile${count}`;
+            cell.innerText = count === 16 ? "" : count;
             count++;
         }
     }
 
     // Swap last two tiles to make the puzzle solvable in one move
-    let lastTile = document.getElementById("cell43").className;
-    document.getElementById("cell43").className = "tile16"; // Make last tile empty
-    document.getElementById("cell44").className = lastTile;
+    let lastTile = document.getElementById("cell43").innerText;
+    document.getElementById("cell43").innerText = "";
+    document.getElementById("cell44").innerText = lastTile;
 
-    // Update empty tile position
     emptyTile = { row: 4, col: 3 };
-
-    // Ensure move count stays at 0
-    document.getElementById("move-count").innerText = moveCount;
 }
