@@ -109,7 +109,7 @@ function checkWin() {
 
     clearInterval(timerInterval);
     setTimeout(() => {
-        if (confirm(`🎉 You won in ${moveCount} moves and ${timer} seconds! Play again?`)) {
+        if (confirm('You won in ${moveCount} moves and ${timer} seconds! Play again?`)) {
             shuffle();
         }
     }, 500);
