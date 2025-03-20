@@ -1,9 +1,9 @@
 let moveCount = 0;
 let timer = 0;
 let timerInterval = null;
-let emptyTile = { row: 4, col: 4 }; // Empty tile starts at the bottom-right
+let emptyTile = { row: 4, col: 4 }; // Empty tile starts at bottom-right
 
-// Start the game timer
+// Start game timer
 function startTimer() {
     if (timerInterval === null) {
         timerInterval = setInterval(() => {
@@ -25,7 +25,7 @@ function resetGame() {
 
 // Move a tile into the empty space
 function moveTile(row, col) {
-    // Only allow moves if the tile is adjacent to the empty space
+    // Only allow movement if the tile is adjacent to the empty space
     if (
         (row === emptyTile.row && Math.abs(col - emptyTile.col) === 1) || 
         (col === emptyTile.col && Math.abs(row - emptyTile.row) === 1)
