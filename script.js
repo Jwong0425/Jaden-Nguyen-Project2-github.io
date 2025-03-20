@@ -1,11 +1,11 @@
 let moveCount = 0;
 let timer = 0;
 let timerInterval = null;
-let emptyTile = { row: 4, col: 4 }; // Empty tile starts at bottom-right
+let emptyTile = { row: 4, col: 4 }; // The empty tile starts at the bottom right
 
-// Start game timer
+// Start the game timer
 function startTimer() {
-    if (timerInterval === null) {
+    if (!timerInterval) {
         timerInterval = setInterval(() => {
             timer++;
             document.getElementById("timer").innerText = timer;
@@ -25,21 +25,21 @@ function resetGame() {
 
 // Move a tile into the empty space
 function moveTile(row, col) {
-    // Only allow movement if the tile is adjacent to the empty space
+    // Check if the clicked tile is adjacent to the empty tile
     if (
-        (row === emptyTile.row && Math.abs(col - emptyTile.col) === 1) || 
+        (row === emptyTile.row && Math.abs(col - emptyTile.col) === 1) ||
         (col === emptyTile.col && Math.abs(row - emptyTile.row) === 1)
     ) {
         let clickedCell = document.getElementById(`cell${row}${col}`);
         let emptyCell = document.getElementById(`cell${emptyTile.row}${emptyTile.col}`);
 
-        // Move the clicked tile into the empty space
+        // Swap tile content
         emptyCell.innerText = clickedCell.innerText;
         emptyCell.className = clickedCell.className;
 
         // Clear the clicked tile (now empty)
         clickedCell.innerText = "";
-        clickedCell.className = "tile16";
+        clickedCell.className = "tile16"; // Empty tile class
 
         // Update empty tile position
         emptyTile = { row, col };
@@ -53,13 +53,15 @@ function moveTile(row, col) {
     }
 }
 
-// Shuffle the board while ensuring it's solvable
+// Generate a solvable shuffled board
 function shuffle() {
     resetGame();
     startTimer();
 
     let numbers = [...Array(15).keys()].map(x => x + 1); // Generate numbers 1-15
-    numbers = numbers.sort(() => Math.random() - 0.5); // Randomize the numbers
+    do {
+        numbers = numbers.sort(() => Math.random() - 0.5); // Random shuffle
+    } while (!isSolvable(numbers)); // Ensure it's solvable
 
     let count = 0;
     for (let row = 1; row <= 4; row++) {
@@ -78,7 +80,18 @@ function shuffle() {
     }
 }
 
-// Set up a nearly solved puzzle for one-move win
+// Check if a shuffled board is solvable
+function isSolvable(arr) {
+    let invCount = 0;
+    for (let i = 0; i < arr.length; i++) {
+        for (let j = i + 1; j < arr.length; j++) {
+            if (arr[i] > arr[j]) invCount++;
+        }
+    }
+    return invCount % 2 === 0; // Solvable if even inversions
+}
+
+// Set up a one-move win scenario
 function simpleGame() {
     resetGame();
 
@@ -108,7 +121,7 @@ function simpleGame() {
     emptyTile = { row: 4, col: 3 };
 }
 
-// Check if the board is in order (Win Condition)
+// Check if the game is won
 function checkWin() {
     let correct = 1;
     for (let row = 1; row <= 4; row++) {
@@ -117,7 +130,7 @@ function checkWin() {
             if (row === 4 && col === 4) {
                 if (cell.innerText !== "") return false;
             } else {
-                if (cell.innerText != correct) return false;
+                if (parseInt(cell.innerText) !== correct) return false;
                 correct++;
             }
         }
@@ -131,7 +144,7 @@ function checkWin() {
     }, 500);
 }
 
-// Event listeners for tiles
+// Add event listeners on page load
 document.addEventListener("DOMContentLoaded", () => {
     for (let row = 1; row <= 4; row++) {
         for (let col = 1; col <= 4; col++) {
