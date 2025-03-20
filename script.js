@@ -49,20 +49,23 @@ function shuffle() {
     resetGame();
     startTimer();
 
-    let tiles = [];
-    for (let row = 1; row <= 4; row++) {
-        for (let col = 1; col <= 4; col++) {
-            tiles.push({ row, col });
-        }
-    }
+    let moves = 100; // Number of random moves to shuffle
+    let directions = [
+        { row: -1, col: 0 }, // Up
+        { row: 1, col: 0 },  // Down
+        { row: 0, col: -1 }, // Left
+        { row: 0, col: 1 }   // Right
+    ];
 
-    for (let i = tiles.length - 1; i > 0; i--) {
-        let j = Math.floor(Math.random() * (i + 1));
+    for (let i = 0; i < moves; i++) {
+        let validMoves = directions.filter(dir => {
+            let newRow = emptyTile.row + dir.row;
+            let newCol = emptyTile.col + dir.col;
+            return newRow >= 1 && newRow <= 4 && newCol >= 1 && newCol <= 4;
+        });
 
-        let tileA = tiles[i];
-        let tileB = tiles[j];
-
-        swapTiles(tileA.row, tileA.col, tileB.row, tileB.col);
+        let move = validMoves[Math.floor(Math.random() * validMoves.length)];
+        swapTiles(emptyTile.row + move.row, emptyTile.col + move.col, emptyTile.row, emptyTile.col);
     }
 
     emptyTile = { row: 4, col: 4 }; // Reset empty tile position
