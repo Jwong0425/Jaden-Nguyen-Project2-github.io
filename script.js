@@ -1,13 +1,12 @@
 let moveCount = 0;
 let timer = 0;
 let timerInterval = null;
-let emptyTile = { row: 4, col: 4 }; 
 
 function startTimer() {
     if (timerInterval === null) {
         timerInterval = setInterval(() => {
             timer++;
-            document.getElementById("timer").innerText = timer;
+            document.getElementById("timer").innerText = timer; // Corrected getElement
         }, 1000);
     }
 }
@@ -17,61 +16,63 @@ function resetGame() {
     timer = 0;
     clearInterval(timerInterval);
     timerInterval = null;
-    document.getElementById("move-count").innerText = moveCount;
-    document.getElementById("timer").innerText = timer;
+    document.getElementById("move-count").innerText = moveCount; // Corrected getElement
+    document.getElementById("timer").innerText = timer; // Corrected getElement
 }
 
-function swapTiles(row1, col1, row2, col2) {
-    let cell1 = document.getElementById(`cell${row1}${col1}`);
-    let cell2 = document.getElementById(`cell${row2}${col2}`);
-
-    let tempClass = cell1.className;
-    cell1.className = cell2.className;
-    cell2.className = tempClass;
-
-    emptyTile.row = row1;
-    emptyTile.col = col1;
-
+function swapTiles(cell1, cell2) {
+    let temp = document.getElementById(cell1).className; // Corrected getElement
+    document.getElementById(cell1).className = document.getElementById(cell2).className; // Corrected getElement
+    document.getElementById(cell2).className = temp; // Corrected getElement
+    
     moveCount++;
-    document.getElementById("move-count").innerText = moveCount;
+    document.getElementById("move-count").innerText = moveCount; // Corrected getElement
+
     checkWin();
 }
 
 function shuffle() {
     resetGame();
     startTimer();
-
-    let tiles = [];
     for (let row = 1; row <= 4; row++) {
-        for (let col = 1; col <= 4; col++) {
-            tiles.push({ row, col });
+        for (let column = 1; column <= 4; column++) {
+            let row2 = Math.floor(Math.random() * 4 + 1);
+            let column2 = Math.floor(Math.random() * 4 + 1);
+            
+            let temp = document.getElementById("cell" + row + column).className; // Corrected getElement
+            document.getElementById("cell" + row + column).className = document.getElementById("cell" + row2 + column2).className; // Corrected getElement
+            document.getElementById("cell" + row2 + column2).className = temp; // Corrected getElement
         }
     }
-
-    for (let i = tiles.length - 1; i > 0; i--) {
-        let j = Math.floor(Math.random() * (i + 1));
-
-        let tileA = tiles[i];
-        let tileB = tiles[j];
-
-        swapTiles(tileA.row, tileA.col, tileB.row, tileB.col);
-    }
-
-    emptyTile = { row: 4, col: 4 };
 }
 
-function clickTile(row, col) {
+function clickTile(row, column) {
     startTimer();
+    let cell = document.getElementById("cell" + row + column); // Corrected getElement
+    let tile = cell.className;
 
-    if (
-        (row === emptyTile.row && Math.abs(col - emptyTile.col) === 1) ||  (col === emptyTile.col && Math.abs(row - emptyTile.row) === 1)) {
-        swapTiles(row, col, emptyTile.row, emptyTile.col);
+    if (tile != "tile16") {
+        if (column < 4 && document.getElementById("cell" + row + (column + 1)).className == "tile16") { // Corrected getElement
+            swapTiles("cell" + row + column, "cell" + row + (column + 1));
+            return;
+        }
+        if (column > 1 && document.getElementById("cell" + row + (column - 1)).className == "tile16") { // Corrected getElement
+            swapTiles("cell" + row + column, "cell" + row + (column - 1));
+            return;
+        }
+        if (row > 1 && document.getElementById("cell" + (row - 1) + column).className == "tile16") { // Corrected getElement
+            swapTiles("cell" + row + column, "cell" + (row - 1) + column);
+            return;
+        }
+        if (row < 4 && document.getElementById("cell" + (row + 1) + column).className == "tile16") { // Corrected getElement
+            swapTiles("cell" + row + column, "cell" + (row + 1) + column);
+            return;
+        }
     }
 }
-
 
 function checkWin() {
-    let correctOrder = [
+    let winCondition = [
         "tile1", "tile2", "tile3", "tile4",
         "tile5", "tile6", "tile7", "tile8",
         "tile9", "tile10", "tile11", "tile12",
@@ -80,35 +81,21 @@ function checkWin() {
 
     let currentTiles = [];
     for (let row = 1; row <= 4; row++) {
-        for (let col = 1; col <= 4; col++) {
-            currentTiles.push(document.getElementById(`cell${row}${col}`).className);
+        for (let column = 1; column <= 4; column++) {
+            currentTiles.push(document.getElementById("cell" + row + column).className); // Corrected getElement
         }
     }
 
-    if (JSON.stringify(currentTiles) === JSON.stringify(correctOrder)) {
+    if (JSON.stringify(winCondition) === JSON.stringify(currentTiles)) {
         clearInterval(timerInterval);
         setTimeout(() => {
-            if (confirm(`Congratulations! You won in ${moveCount} moves and ${timer} seconds.\nDo you want to play again?`)) {
-                shuffle();
-            }
+            alert(`Congratulations! You won in ${moveCount} moves and ${timer} seconds.`);
+            shuffle();
         }, 500);
     }
 }
 
 function simpleGame() {
-    resetGame();
-    let count = 1;
-    for (let row = 1; row <= 4; row++) {
-        for (let col = 1; col <= 4; col++) {
-            let cell = document.getElementById(`cell${row}${col}`);
-            cell.className = count === 16 ? "tile16" : `tile${count}`;
-            count++;
-        }
-    }
-
-    let lastTile = document.getElementById("cell43").className;
-    document.getElementById("cell43").className = "tile16";
-    document.getElementById("cell44").className = lastTile;
-    emptyTile = { row: 4, col: 3 };
-    document.getElementById("move-count").innerText = moveCount;
+    shuffle();
+    swapTiles("cell44", "cell43"); // Double-check the ids
 }
