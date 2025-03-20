@@ -25,7 +25,6 @@ function resetGame() {
 
 // Move a tile into the empty space
 function moveTile(row, col) {
-    // Check if the clicked tile is adjacent to the empty tile
     if (
         (row === emptyTile.row && Math.abs(col - emptyTile.col) === 1) ||
         (col === emptyTile.col && Math.abs(row - emptyTile.row) === 1)
@@ -33,54 +32,57 @@ function moveTile(row, col) {
         let clickedCell = document.getElementById(`cell${row}${col}`);
         let emptyCell = document.getElementById(`cell${emptyTile.row}${emptyTile.col}`);
 
-        // Swap tile content
-        emptyCell.innerText = clickedCell.innerText;
+        emptyCell.innerHTML = clickedCell.innerHTML;
         emptyCell.className = clickedCell.className;
 
-        // Clear the clicked tile (now empty)
-        clickedCell.innerText = "";
-        clickedCell.className = "tile16"; // Empty tile class
+        clickedCell.innerHTML = "";
+        clickedCell.className = "tile16";
 
-        // Update empty tile position
         emptyTile = { row, col };
 
-        // Increase move count
         moveCount++;
         document.getElementById("move-count").innerText = moveCount;
 
-        // Check if the game is won
         checkWin();
     }
 }
 
-// Generate a solvable shuffled board
+// Shuffle tiles without changing numbers
 function shuffle() {
     resetGame();
     startTimer();
 
-    let numbers = [...Array(15).keys()].map(x => x + 1); // Generate numbers 1-15
-    do {
-        numbers = numbers.sort(() => Math.random() - 0.5); // Random shuffle
-    } while (!isSolvable(numbers)); // Ensure it's solvable
-
-    let count = 0;
+    let tiles = [];
     for (let row = 1; row <= 4; row++) {
         for (let col = 1; col <= 4; col++) {
             let cell = document.getElementById(`cell${row}${col}`);
-            if (count < 15) {
-                cell.innerText = numbers[count];
-                cell.className = `tile${numbers[count]}`;
-                count++;
+            if (cell.className !== "tile16") {
+                tiles.push(cell);
+            }
+        }
+    }
+
+    do {
+        tiles.sort(() => Math.random() - 0.5);
+    } while (!isSolvable(tiles.map(tile => parseInt(tile.innerText))));
+
+    let index = 0;
+    for (let row = 1; row <= 4; row++) {
+        for (let col = 1; col <= 4; col++) {
+            let cell = document.getElementById(`cell${row}${col}`);
+            if (index < tiles.length) {
+                cell.innerHTML = tiles[index].innerHTML;
+                cell.className = tiles[index].className;
+                index++;
             } else {
-                cell.innerText = "";
-                cell.className = "tile16"; // Empty tile
+                cell.innerHTML = "";
+                cell.className = "tile16";
                 emptyTile = { row, col };
             }
         }
     }
 }
 
-// Check if a shuffled board is solvable
 function isSolvable(arr) {
     let invCount = 0;
     for (let i = 0; i < arr.length; i++) {
@@ -88,47 +90,16 @@ function isSolvable(arr) {
             if (arr[i] > arr[j]) invCount++;
         }
     }
-    return invCount % 2 === 0; // Solvable if even inversions
+    return invCount % 2 === 0;
 }
 
-// Set up a one-move win scenario
-function simpleGame() {
-    resetGame();
-
-    let count = 1;
-    for (let row = 1; row <= 4; row++) {
-        for (let col = 1; col <= 4; col++) {
-            let cell = document.getElementById(`cell${row}${col}`);
-            if (count < 16) {
-                cell.innerText = count;
-                cell.className = `tile${count}`;
-                count++;
-            } else {
-                cell.innerText = "";
-                cell.className = "tile16";
-            }
-        }
-    }
-
-    // Swap last two tiles to create a one-move win condition
-    let lastTile = document.getElementById("cell43").innerText;
-    document.getElementById("cell43").innerText = "";
-    document.getElementById("cell43").className = "tile16";
-    document.getElementById("cell44").innerText = lastTile;
-    document.getElementById("cell44").className = `tile${lastTile}`;
-
-    // Update empty tile position
-    emptyTile = { row: 4, col: 3 };
-}
-
-// Check if the game is won
 function checkWin() {
     let correct = 1;
     for (let row = 1; row <= 4; row++) {
         for (let col = 1; col <= 4; col++) {
             let cell = document.getElementById(`cell${row}${col}`);
             if (row === 4 && col === 4) {
-                if (cell.innerText !== "") return false;
+                if (cell.innerHTML !== "") return false;
             } else {
                 if (parseInt(cell.innerText) !== correct) return false;
                 correct++;
@@ -144,7 +115,6 @@ function checkWin() {
     }, 500);
 }
 
-// Add event listeners on page load
 document.addEventListener("DOMContentLoaded", () => {
     for (let row = 1; row <= 4; row++) {
         for (let col = 1; col <= 4; col++) {
