@@ -32,14 +32,12 @@ function moveTile(row, col) {
         let clickedCell = document.getElementById(`cell${row}${col}`);
         let emptyCell = document.getElementById(`cell${emptyTile.row}${emptyTile.col}`);
 
-        // Remove numbers and just swap the tiles
-        emptyCell.innerHTML = ""; // Clear the number from the empty cell
-        emptyCell.className = clickedCell.className;
+        // Swap the class names (background images)
+        let tempClass = clickedCell.className;
+        clickedCell.className = emptyCell.className;
+        emptyCell.className = tempClass;
 
-        // Clear the clicked tile and apply a default class for the empty tile
-        clickedCell.innerHTML = ""; // Clear the number from the clicked cell
-        clickedCell.className = "tile16"; // Empty tile class
-
+        // Update the empty tile position
         emptyTile = { row, col };
 
         moveCount++;
@@ -73,12 +71,11 @@ function shuffle() {
         for (let col = 1; col <= 4; col++) {
             let cell = document.getElementById(`cell${row}${col}`);
             if (index < tiles.length) {
-                // Remove any numbers in the cells
-                cell.innerHTML = ""; // Clear any previous numbers
+                // Set the background image based on the tile index
                 cell.className = tiles[index].className;
                 index++;
             } else {
-                cell.innerHTML = ""; // Make sure empty tile remains empty
+                // Make sure empty tile remains empty
                 cell.className = "tile16";
                 emptyTile = { row, col };
             }
@@ -102,9 +99,9 @@ function checkWin() {
         for (let col = 1; col <= 4; col++) {
             let cell = document.getElementById(`cell${row}${col}`);
             if (row === 4 && col === 4) {
-                if (cell.innerHTML !== "") return false;
+                if (cell.className !== "tile16") return false;
             } else {
-                if (parseInt(cell.innerText) !== correct) return false;
+                if (parseInt(cell.className.substring(4)) !== correct) return false;
                 correct++;
             }
         }
