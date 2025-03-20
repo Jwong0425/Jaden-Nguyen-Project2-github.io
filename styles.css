@@ -1,72 +1,128 @@
-body {
-    background: #156823;
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
+let moveCount = 0;
+let timer = 0;
+let timerInterval = null;
+let emptyTile = { row: 4, col: 4 }; // The empty tile starts at the bottom right
+
+// Start the game timer
+function startTimer() {
+    if (!timerInterval) {
+        timerInterval = setInterval(() => {
+            timer++;
+            document.getElementById("timer").innerText = timer;
+        }, 1000);
+    }
 }
 
-#table {
-    display: table;
+// Reset game stats
+function resetGame() {
+    moveCount = 0;
+    timer = 0;
+    clearInterval(timerInterval);
+    timerInterval = null;
+    document.getElementById("move-count").innerText = moveCount;
+    document.getElementById("timer").innerText = timer;
 }
 
-.tile1, .tile2, .tile3, .tile4, .tile5, .tile6, .tile7, .tile8,
-.tile9, .tile10, .tile11, .tile12, .tile13, .tile14, .tile15, .tile16 {
-    display: table-cell;
-    width: 90px;
-    height: 90px;
-    border: 1px solid rgb(194, 181, 9);
-    background: url("number_puzzle_game.png");
-    cursor: pointer;
-    text-align: center;
-    font-size: 24px;
-    font-weight: bold;
-    vertical-align: middle;
+// Move a tile into the empty space
+function moveTile(row, col) {
+    if (
+        (row === emptyTile.row && Math.abs(col - emptyTile.col) === 1) ||
+        (col === emptyTile.col && Math.abs(row - emptyTile.row) === 1)
+    ) {
+        let clickedCell = document.getElementById(`cell${row}${col}`);
+        let emptyCell = document.getElementById(`cell${emptyTile.row}${emptyTile.col}`);
+
+        // Remove numbers and just swap the tiles
+        emptyCell.innerHTML = ""; // Clear the number from the empty cell
+        emptyCell.className = clickedCell.className;
+
+        // Clear the clicked tile and apply a default class for the empty tile
+        clickedCell.innerHTML = ""; // Clear the number from the clicked cell
+        clickedCell.className = "tile16"; // Empty tile class
+
+        emptyTile = { row, col };
+
+        moveCount++;
+        document.getElementById("move-count").innerText = moveCount;
+
+        checkWin();
+    }
 }
 
-.tile1 { background-position: 0px 0px; }
-.tile2 { background-position: -90px 0px; }
-.tile3 { background-position: -180px 0px; }
-.tile4 { background-position: -270px 0px; }
-.tile5 { background-position: 0px -90px; }
-.tile6 { background-position: -90px -90px; }
-.tile7 { background-position: -180px -90px; }
-.tile8 { background-position: -270px -90px; }
-.tile9 { background-position: 0px -180px; }
-.tile10 { background-position: -90px -180px; }
-.tile11 { background-position: -180px -180px; }
-.tile12 { background-position: -270px -180px; }
-.tile13 { background-position: 0px -270px; }
-.tile14 { background-position: -90px -270px; }
-.tile15 { background-position: -180px -270px; }
-.tile16 {
-    background: white;
-    cursor: default;
+// Shuffle tiles without changing numbers
+function shuffle() {
+    resetGame();
+    startTimer();
+
+    let tiles = [];
+    for (let row = 1; row <= 4; row++) {
+        for (let col = 1; col <= 4; col++) {
+            let cell = document.getElementById(`cell${row}${col}`);
+            if (cell.className !== "tile16") {
+                tiles.push(cell);
+            }
+        }
+    }
+
+    do {
+        tiles.sort(() => Math.random() - 0.5);
+    } while (!isSolvable(tiles.map(tile => parseInt(tile.innerText))));
+
+    let index = 0;
+    for (let row = 1; row <= 4; row++) {
+        for (let col = 1; col <= 4; col++) {
+            let cell = document.getElementById(`cell${row}${col}`);
+            if (index < tiles.length) {
+                // Remove any numbers in the cells
+                cell.innerHTML = ""; // Clear any previous numbers
+                cell.className = tiles[index].className;
+                index++;
+            } else {
+                cell.innerHTML = ""; // Make sure empty tile remains empty
+                cell.className = "tile16";
+                emptyTile = { row, col };
+            }
+        }
+    }
 }
 
-button {
-    margin-top: 20px;
-    padding: 10px;
-    font-size: 16px;
-    cursor: pointer;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
+function isSolvable(arr) {
+    let invCount = 0;
+    for (let i = 0; i < arr.length; i++) {
+        for (let j = i + 1; j < arr.length; j++) {
+            if (arr[i] > arr[j]) invCount++;
+        }
+    }
+    return invCount % 2 === 0;
 }
 
-button:hover {
-    background-color: #45a049;
+function checkWin() {
+    let correct = 1;
+    for (let row = 1; row <= 4; row++) {
+        for (let col = 1; col <= 4; col++) {
+            let cell = document.getElementById(`cell${row}${col}`);
+            if (row === 4 && col === 4) {
+                if (cell.innerHTML !== "") return false;
+            } else {
+                if (parseInt(cell.innerText) !== correct) return false;
+                correct++;
+            }
+        }
+    }
+
+    clearInterval(timerInterval);
+    setTimeout(() => {
+        if (confirm(`You won in ${moveCount} moves and ${timer} seconds! Play again?`)) {
+            shuffle();
+        }
+    }, 500);
 }
 
-p {
-    font-size: 18px;
-    margin-top: 10px;
-    color: white;
-}
-
-#game-container {
-    text-align: center;
-}
+document.addEventListener("DOMContentLoaded", () => {
+    for (let row = 1; row <= 4; row++) {
+        for (let col = 1; col <= 4; col++) {
+            document.getElementById(`cell${row}${col}`).addEventListener("click", () => moveTile(row, col));
+        }
+    }
+    shuffle();
+});
