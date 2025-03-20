@@ -32,7 +32,7 @@ function moveTile(row, col) {
         let clickedCell = document.getElementById(`cell${row}${col}`);
         let emptyCell = document.getElementById(`cell${emptyTile.row}${emptyTile.col}`);
 
-        // Swap the class names (background images)
+        // Swap class names (background images)
         let tempClass = clickedCell.className;
         clickedCell.className = emptyCell.className;
         emptyCell.className = tempClass;
@@ -62,20 +62,21 @@ function shuffle() {
         }
     }
 
+    // Shuffle tiles but keep the empty tile in the same place
     do {
         tiles.sort(() => Math.random() - 0.5);
-    } while (!isSolvable(tiles.map(tile => parseInt(tile.innerText))));
+    } while (!isSolvable(tiles.map(tile => parseInt(tile.className.substring(4)))));
 
     let index = 0;
     for (let row = 1; row <= 4; row++) {
         for (let col = 1; col <= 4; col++) {
             let cell = document.getElementById(`cell${row}${col}`);
             if (index < tiles.length) {
-                // Set the background image based on the tile index
+                // Set the background image based on the tile class
                 cell.className = tiles[index].className;
                 index++;
             } else {
-                // Make sure empty tile remains empty
+                // Make sure the empty tile stays empty
                 cell.className = "tile16";
                 emptyTile = { row, col };
             }
