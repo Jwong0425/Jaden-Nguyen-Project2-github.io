@@ -147,7 +147,14 @@ function simpleGame() {
 }
 
 // Initialize buttons and events
-document.querySelector("button[onclick='shuffle();']").addEventListener("click", startGame);
-document.querySelector("button[onclick='simpleGame();']").addEventListener("click", simpleGame);
-window.onload = startGame;
+document.getElementById("new-game").addEventListener("click", startGame);
+document.getElementById("simple-game").addEventListener("click", simpleGame);
 
+// Add click event listeners to each tile
+for (let i = 1; i <= 4; i++) {
+    for (let j = 1; j <= 4; j++) {
+        document.getElementById(`cell${i}${j}`).addEventListener("click", () => clickTile(i, j));
+}
+
+// Start the game on page load
+window.onload = startGame;
