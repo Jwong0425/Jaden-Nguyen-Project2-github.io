@@ -8,8 +8,18 @@ body {
     margin: 0;
 }
 
+#game-container {
+    text-align: center;
+}
+
 #table {
     display: table;
+    margin-bottom: 20px;
+    border-spacing: 2px;
+}
+
+.table-row {
+    display: table-row;
 }
 
 .tile1, .tile2, .tile3, .tile4, .tile5, .tile6, .tile7, .tile8,
@@ -65,8 +75,4 @@ p {
     font-size: 18px;
     margin-top: 10px;
     color: white;
-}
-
-#game-container {
-    text-align: center;
 }
