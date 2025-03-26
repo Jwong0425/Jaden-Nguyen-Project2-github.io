@@ -1,8 +1,8 @@
-let moveCount = 0; // Number of moves
-let startTime = 0; // Start time for the game
-let timerInterval; // Timer interval
+let moveCount = 0;
+let startTime = 0;
+let timerInterval;
 
-// Initialize the game
+// Start game
 function startGame() {
     moveCount = 0;
     document.getElementById("move-count").textContent = moveCount;
@@ -10,15 +10,22 @@ function startGame() {
     startTime = Date.now();
     timerInterval = setInterval(updateTimer, 1000);
     shuffle();
+
+    // Add event listeners to each tile dynamically
+    for (let i = 1; i <= 4; i++) {
+        for (let j = 1; j <= 4; j++) {
+            document.getElementById(`cell${i}${j}`).onclick = () => clickTile(i, j);
+        }
+    }
 }
 
-// Update the timer every second
+// Timer update function
 function updateTimer() {
     const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
     document.getElementById("timer").textContent = elapsedTime;
 }
 
-// Shuffle the tiles to start a new game
+// Shuffle tiles
 function shuffle() {
     const tiles = [];
     for (let i = 1; i <= 15; i++) {
@@ -26,84 +33,68 @@ function shuffle() {
     }
     tiles.push(null); // Empty space
 
-    // Shuffle the tiles randomly
+    // Shuffle using Fisher-Yates algorithm
     for (let i = tiles.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
     }
 
-    // Apply the shuffled tiles to the DOM
+    // Apply shuffled tiles to the DOM
     for (let i = 1; i <= 4; i++) {
         for (let j = 1; j <= 4; j++) {
             const tileIndex = (i - 1) * 4 + j - 1;
             const tile = tiles[tileIndex];
             const cell = document.getElementById(`cell${i}${j}`);
-            if (tile === null) {
-                cell.className = "tile16"; // Empty tile
-            } else {
-                cell.className = `tile${tile}`;
+            cell.className = tile === null ? "tile tile16" : `tile tile${tile}`;
+        }
+    }
+}
+
+// Tile click event
+function clickTile(row, col) {
+    const cell = document.getElementById(`cell${row}${col}`);
+    if (cell.className.includes("tile16")) return; // Don't move the empty space
+
+    // Find the empty tile and swap if adjacent
+    const directions = [
+        [row - 1, col], [row + 1, col], 
+        [row, col - 1], [row, col + 1]
+    ];
+
+    for (const [r, c] of directions) {
+        if (r >= 1 && r <= 4 && c >= 1 && c <= 4) {
+            const adjacent = document.getElementById(`cell${r}${c}`);
+            if (adjacent.className.includes("tile16")) {
+                swapTiles(cell, adjacent);
+                incrementMoveCount();
+                setTimeout(checkWin, 1000);
+                break;
             }
         }
     }
 }
 
-// Click a tile to move it
-function clickTile(row, col) {
-    const cell = document.getElementById(`cell${row}${col}`);
-    const tile = cell.className;
-
-    if (tile !== "tile16") { // Don't move if it's the empty space
-        // Check adjacent tiles to swap with the empty space
-        if (row < 4 && document.getElementById(`cell${row + 1}${col}`).className === "tile16") {
-            swapTiles(`cell${row}${col}`, `cell${row + 1}${col}`);
-            incrementMoveCount();
-            setTimeout(() => { checkWin(); }, 1000);
-            return;
-        }
-        if (row > 1 && document.getElementById(`cell${row - 1}${col}`).className === "tile16") {
-            swapTiles(`cell${row}${col}`, `cell${row - 1}${col}`);
-            incrementMoveCount();
-            setTimeout(() => { checkWin(); }, 1000);
-            return;
-        }
-        if (col < 4 && document.getElementById(`cell${row}${col + 1}`).className === "tile16") {
-            swapTiles(`cell${row}${col}`, `cell${row}${col + 1}`);
-            incrementMoveCount();
-            setTimeout(() => { checkWin(); }, 1000);
-            return;
-        }
-        if (col > 1 && document.getElementById(`cell${row}${col - 1}`).className === "tile16") {
-            swapTiles(`cell${row}${col}`, `cell${row}${col - 1}`);
-            incrementMoveCount();
-            setTimeout(() => { checkWin(); }, 1000);
-            return;
-        }
-    }
-}
-
-// Swap tiles in the DOM
-function swapTiles(cell1Id, cell2Id) {
-    const cell1 = document.getElementById(cell1Id);
-    const cell2 = document.getElementById(cell2Id);
+// Swap tiles
+function swapTiles(cell1, cell2) {
     const tempClass = cell1.className;
     cell1.className = cell2.className;
     cell2.className = tempClass;
 }
 
-// Increment the move count
+// Increment move count
 function incrementMoveCount() {
     moveCount++;
     document.getElementById("move-count").textContent = moveCount;
 }
 
-// Check if the user has won the game
+// Check if the game is won
 function checkWin() {
     let won = true;
     for (let i = 1; i <= 4; i++) {
         for (let j = 1; j <= 4; j++) {
             const tileNumber = (i - 1) * 4 + j;
             const cell = document.getElementById(`cell${i}${j}`);
-            if (tileNumber !== 16 && cell.className !== `tile${tileNumber}`) {
+            if (tileNumber !== 16 && !cell.className.includes(`tile${tileNumber}`)) {
                 won = false;
                 break;
             }
@@ -112,49 +103,39 @@ function checkWin() {
 
     if (won) {
         setTimeout(() => {
-            alert(`Congratulations!!\nTime: ${document.getElementById("timer").textContent} seconds\nMoves: ${moveCount}\nWould you like to play again?`);
-            if (confirm("Do you want to play again?")) {
-                startGame();
-            }
-        }, 1000); // Delay the win message
+            alert(`Congratulations!!\nTime: ${document.getElementById("timer").textContent} sec\nMoves: ${moveCount}`);
+            if (confirm("Do you want to play again?")) startGame();
+        }, 1000);
     }
 }
 
-// Start a simple game with only one tile out of position
+// Simple game mode
 function simpleGame() {
-    // Simple game: Only one tile out of place
     const simpleTiles = [
         1, 2, 3, 4,
         5, 6, 7, 8,
         9, 10, 11, 12,
-        13, 14, 15, null
+        13, 14, null, 15
     ];
 
-    // Apply the simple game setup
     for (let i = 1; i <= 4; i++) {
         for (let j = 1; j <= 4; j++) {
             const tileIndex = (i - 1) * 4 + j - 1;
             const tile = simpleTiles[tileIndex];
             const cell = document.getElementById(`cell${i}${j}`);
-            if (tile === null) {
-                cell.className = "tile16";
-            } else {
-                cell.className = `tile${tile}`;
-            }
+            cell.className = tile === null ? "tile tile16" : `tile tile${tile}`;
         }
     }
-    startGame();
+    moveCount = 0;
+    document.getElementById("move-count").textContent = moveCount;
+    startTime = Date.now();
+    clearInterval(timerInterval);
+    timerInterval = setInterval(updateTimer, 1000);
 }
 
-// Initialize buttons and events
+// Button event listeners
 document.getElementById("new-game").addEventListener("click", startGame);
 document.getElementById("simple-game").addEventListener("click", simpleGame);
 
-// Add click event listeners to each tile
-for (let i = 1; i <= 4; i++) {
-    for (let j = 1; j <= 4; j++) {
-        document.getElementById(`cell${i}${j}`).addEventListener("click", () => clickTile(i, j));
-}
-
-// Start the game on page load
-window.onload = startGame;
+// Run game when DOM is loaded
+window.addEventListener("DOMContentLoaded", startGame);
