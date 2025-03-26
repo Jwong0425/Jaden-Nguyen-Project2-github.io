@@ -10,11 +10,14 @@ function startGame() {
     startTime = Date.now();
     timerInterval = setInterval(updateTimer, 1000);
     shuffle();
+    addTileClickListeners(); // Ensure event listeners are attached
+}
 
-    // Add event listeners to each tile dynamically
+// Function to add click listeners to tiles
+to function addTileClickListeners() {
     for (let i = 1; i <= 4; i++) {
         for (let j = 1; j <= 4; j++) {
-            document.getElementById(`cell${i}${j}`).onclick = () => clickTile(i, j);
+            document.getElementById(`cell${i}${j}`).addEventListener("click", () => clickTile(i, j));
         }
     }
 }
