@@ -14,7 +14,7 @@ function startGame() {
 }
 
 // Function to add click listeners to tiles
-to function addTileClickListeners() {
+function addTileClickListeners() {
     for (let i = 1; i <= 4; i++) {
         for (let j = 1; j <= 4; j++) {
             document.getElementById(`cell${i}${j}`).addEventListener("click", () => clickTile(i, j));
@@ -137,8 +137,18 @@ function simpleGame() {
 }
 
 // Button event listeners
-document.getElementById("new-game").addEventListener("click", startGame);
-document.getElementById("simple-game").addEventListener("click", simpleGame);
+document.getElementById("new-game").addEventListener("click", function() {
+    console.log("New Game button clicked");
+    startGame();
+});
+
+document.getElementById("simple-game").addEventListener("click", function() {
+    console.log("Simple Game button clicked");
+    simpleGame();
+});
 
 // Run game when DOM is loaded
-window.addEventListener("DOMContentLoaded", startGame);
+window.addEventListener("DOMContentLoaded", function() {
+    console.log("DOM Loaded");
+    startGame();
+});
